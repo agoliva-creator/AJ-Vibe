@@ -1,0 +1,1 @@
+<h1>Welcome to AJ Vibe</h1><p>Hello {{ $name }},</p><p>Your customer account is ready. Browse the collection and track your orders from your account.</p><p><a href="{{ route('catalog.index') }}">Visit the shop</a></p>

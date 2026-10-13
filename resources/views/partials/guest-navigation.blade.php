@@ -1,0 +1,6 @@
+<div class="fashion-announcement no-print"><div class="fashion-container">New season. New favorites. <a href="{{ route('catalog.index') }}">Discover the collection →</a></div></div>
+<nav class="fashion-navigation navbar-expand-lg no-print" aria-label="Main navigation"><div class="fashion-container fashion-nav-inner">
+<a class="fashion-brand" href="{{ route('catalog.index') }}"><span class="fashion-brand-mark" aria-hidden="true">A</span>AJ <span class="fashion-brand-light">Vibe</span></a>
+<button class="navbar-toggler fashion-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#guest-navigation" aria-controls="guest-navigation" aria-expanded="false" aria-label="Toggle navigation">☰</button>
+<div class="collapse navbar-collapse fashion-nav-collapse" id="guest-navigation"><div class="fashion-nav-links"><a href="{{ route('catalog.index') }}" @class(['is-current' => request()->routeIs('catalog.*')])>Products</a><a href="{{ route('cart.show') }}" @class(['is-current' => request()->routeIs('cart.*')])>Shopping cart</a></div><div class="fashion-nav-links"><a href="{{ route('login') }}" @class(['is-current' => request()->routeIs('login')])>Sign in</a><a href="{{ route('register') }}" @class(['is-current' => request()->routeIs('register')])>Create account</a></div></div>
+</div></nav>

@@ -1,0 +1,1 @@
+<h1>Low-stock alert</h1><p>{{ $productName }} now has {{ $stock }} units remaining.</p><p><a href="{{ route('records.index','products') }}">Manage inventory</a></p>
