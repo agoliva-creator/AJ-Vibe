@@ -54,14 +54,14 @@ test('role and password changes revoke existing api tokens', function () {
     expect($customer->tokens()->count())->toBe(0);
     expect($customer->fresh()->role)->toBe('vendor');
 });
-test('admin archives cancelled orders without destroying history', function () {
+test('admin cannot archive orders under vendor-only access', function () {
     $admin = User::factory()->create(['role' => 'admin']);
     $order = Order::factory()->create(['status' => 'cancelled']);
     $item = OrderItem::factory()->create(['order_id' => $order->id, 'status' => 'cancelled', 'inventory_reserved' => false]);
-    $this->actingAs($admin)->delete('/orders/'.$order->id)->assertRedirect('/orders');
-    $this->assertSoftDeleted($order);
+    $this->actingAs($admin)->delete('/orders/'.$order->id)->assertForbidden();
+    $this->assertModelExists($order);
     $this->assertModelExists($item);
-    $this->get('/orders/'.$order->id)->assertNotFound();
+    $this->get('/orders/'.$order->id)->assertForbidden();
 });
 test('fixed coupons cannot exceed the subtotal', function () {
     $coupon = Coupon::factory()->create(['type' => 'fixed', 'value' => 50000]);
@@ -80,13 +80,13 @@ test('production seeding creates a private admin and never demo identities', fun
     $this->artisan('db:seed', ['--force' => true])->assertExitCode(0);
     expect($admin->fresh()->password)->toBe($hash);
 });
-test('product policies grant ownership only to the vendor and control to admin', function () {
+test('product policies grant ownership only to the vendor', function () {
     $product = Product::factory()->create();
     $admin = User::factory()->create(['role' => 'admin']);
     $other = User::factory()->create(['role' => 'vendor']);
     $customer = User::factory()->create();
     expect(Gate::forUser($product->vendor)->allows('update', $product))->toBeTrue();
-    expect(Gate::forUser($admin)->allows('delete', $product))->toBeTrue();
+    expect(Gate::forUser($admin)->allows('delete', $product))->toBeFalse();
     expect(Gate::forUser($other)->allows('update', $product))->toBeFalse();
     expect(Gate::forUser($customer)->allows('update', $product))->toBeFalse();
 });

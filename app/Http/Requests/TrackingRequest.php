@@ -8,7 +8,7 @@ class TrackingRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()?->isAdmin() || $this->user()?->isVendor();
+        return $this->user()?->isVendor();
     }
 
     public function rules(): array

@@ -9,21 +9,21 @@ class OrderPolicy
 {
     public function view(User $user, Order $order): bool
     {
-        return $user->isAdmin() || ($user->isVendor() ? $order->items()->where('vendor_id', $user->id)->exists() : $order->user_id === $user->id);
+        return $user->isVendor() ? $order->items()->where('vendor_id', $user->id)->exists() : ($user->role === 'customer' && $order->user_id === $user->id);
     }
 
     public function update(User $user, Order $order): bool
     {
-        return ($user->isAdmin() || $user->isVendor()) && $this->view($user, $order);
+        return $user->isVendor() && $this->view($user, $order);
     }
 
     public function cancel(User $user, Order $order): bool
     {
-        return $user->isAdmin() || ($user->role === 'customer' && $order->user_id === $user->id);
+        return $user->role === 'customer' && $order->user_id === $user->id;
     }
 
     public function delete(User $user, Order $order): bool
     {
-        return $user->isAdmin() && $order->status === 'cancelled';
+        return false;
     }
 }

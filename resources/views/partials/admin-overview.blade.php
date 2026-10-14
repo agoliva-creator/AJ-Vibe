@@ -1,0 +1,9 @@
+<section class="fashion-container py-5" aria-labelledby="admin-title">
+    <div class="user-management-heading"><div><p class="inventory-eyebrow">Administration / AJ Vibe</p><h1 id="admin-title">Your administration workspace.</h1><p class="text-muted mb-0">Welcome back, {{ auth()->user()->name }}. Manage your people and store preferences.</p></div><a class="btn btn-primary" href="{{ route('records.create', 'users') }}">Add user +</a></div>
+    <div class="row g-4">
+        <div class="col-12 col-md-6"><section class="user-management-panel h-100"><p class="inventory-eyebrow">Account management</p><h2>Registered users</h2><p class="display-6 mb-3">{{ $extraCount }}</p><p class="text-muted">Review customer and seller accounts, roles, and account status.</p><a class="btn btn-outline-secondary" href="{{ route('records.index', 'users') }}">Manage users →</a></section></div>
+        <div class="col-12 col-md-6"><section class="user-management-panel h-100"><p class="inventory-eyebrow">Store preferences</p><h2>System settings</h2><p class="text-muted mt-3">Maintain your store name, shipping fee, tax rate, and alert preferences.</p><a class="btn btn-outline-secondary" href="{{ route('settings') }}">Open settings →</a></section></div>
+        <div class="col-12 col-md-6"><section class="user-management-panel h-100"><h2>Notifications</h2><p class="text-muted">Review activity updates and mark notifications as read.</p><a class="btn btn-outline-secondary" href="{{ route('notifications.index') }}">View notifications →</a></section></div>
+        <div class="col-12 col-md-6"><section class="user-management-panel h-100"><h2>Your account</h2><p class="text-muted">Update your profile photo, email address, and password.</p><a class="btn btn-outline-secondary" href="{{ route('account') }}">Account settings →</a></section></div>
+    </div>
+</section>

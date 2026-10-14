@@ -9,7 +9,7 @@ class OrderStatusRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return (bool) ($this->user()?->isAdmin() || $this->user()?->isVendor());
+        return (bool) ($this->user()?->isVendor());
     }
 
     public function rules(): array

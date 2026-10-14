@@ -41,11 +41,11 @@ Route::middleware(['auth', 'active'])->group(function (): void {
     Route::get('/dashboard', DashboardController::class)->name('dashboard');
     Route::view('/account', 'account')->name('account');
     Route::put('/account', [AccountController::class, 'update'])->name('account.update');
-    Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
+    Route::get('/orders', [OrderController::class, 'index'])->middleware('role:customer,vendor')->name('orders.index');
     Route::post('/orders', [OrderController::class, 'store'])->middleware(['role:customer', 'throttle:10,1'])->name('orders.store');
-    Route::patch('/orders/{order}/tracking', [OrderController::class, 'tracking'])->middleware('role:admin,vendor')->name('orders.tracking');
+    Route::patch('/orders/{order}/tracking', [OrderController::class, 'tracking'])->middleware('role:vendor')->name('orders.tracking');
     Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
-    Route::patch('/orders/{order}', [OrderController::class, 'update'])->middleware('role:admin,vendor')->name('orders.update');
+    Route::patch('/orders/{order}', [OrderController::class, 'update'])->middleware('role:vendor')->name('orders.update');
     Route::post('/orders/{order}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
     Route::delete('/orders/{order}', [OrderController::class, 'destroy'])->middleware('role:admin')->name('orders.destroy');
     Route::get('/orders/{order}/invoice', [OrderController::class, 'invoice'])->name('orders.invoice');

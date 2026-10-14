@@ -50,7 +50,7 @@ class Order extends Model
     public function scopeVisibleTo(Builder $query, User $user): Builder
     {
         if ($user->isAdmin()) {
-            return $query;
+            return $query->whereRaw('1 = 0');
         }
 
         return $user->isVendor() ? $query->whereHas('items', fn (Builder $items) => $items->where('vendor_id', $user->id)) : $query->where('user_id', $user->id);

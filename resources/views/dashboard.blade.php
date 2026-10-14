@@ -3,6 +3,9 @@
 @section('body-class', 'fashion-dashboard workspace-shell')
 @section('main-class', 'fashion-main')
 @section('content')
+@if(auth()->user()->isAdmin())
+@include('partials.admin-overview')
+@else
 <section class="fashion-hero workspace-hero" aria-labelledby="workspace-title">
 <img class="fashion-hero-photo" src="{{ asset('images/dashboard/bieber.jpg') }}" alt="Fashion collection for your marketplace" fetchpriority="high">
 <div class="fashion-container fashion-hero-inner"><div class="fashion-hero-copy"><p class="fashion-kicker">{{ auth()->user()->isAdmin() ? 'Admin' : 'Seller' }} workspace / AJ Vibe</p><h1 id="workspace-title">{{ auth()->user()->isAdmin() ? 'Your Store.' : 'Your Collection.' }}<br>{{ auth()->user()->isAdmin() ? 'One Clear View.' : 'New Possibilities.' }}</h1><p class="fashion-hero-description">Welcome back, {{ auth()->user()->name }}.<br>{{ auth()->user()->isAdmin() ? 'Keep your products, people, and orders moving together.' : 'Create your next favorite. Manage inventory and follow your sales.' }}</p><div class="fashion-hero-points"><span>✓ Live inventory</span><span>✓ Order tracking</span><span>✓ {{ auth()->user()->isAdmin() ? 'Full store control' : 'Your seller workspace' }}</span></div><a class="fashion-button" href="{{ route('records.create','products') }}">Add product <span aria-hidden="true">+</span></a><a class="workspace-hero-secondary" href="{{ route('orders.index') }}">View orders →</a></div></div>
@@ -42,4 +45,5 @@
 <a class="fashion-editorial-card fashion-editorial-orders" href="{{ route('orders.index') }}"><img src="{{ asset('images/dashboard/orders-editorial.jpg') }}" alt="Casual outfit on a forest stairway" loading="lazy"><div><span>Every purchase matters</span><h2>From order<br>to delivery.</h2><span class="fashion-editorial-link">Process orders ↗</span></div></a>
 <a class="fashion-editorial-card fashion-editorial-account" href="{{ auth()->user()->isAdmin() ? route('settings') : route('account') }}"><img src="{{ asset('images/dashboard/bieber.jpg') }}" alt="Build your store's identity" loading="lazy"><div><span>{{ auth()->user()->isAdmin() ? 'Your marketplace' : 'Your seller profile' }}</span><h2>Make it yours.</h2><span class="fashion-editorial-link">{{ auth()->user()->isAdmin() ? 'Store settings' : 'Your account' }} ↗</span></div></a>
 </div></section>
+@endif
 @endsection

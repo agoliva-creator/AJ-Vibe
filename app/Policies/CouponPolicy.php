@@ -9,26 +9,26 @@ class CouponPolicy
 {
     public function viewAny(User $user): bool
     {
-        return $user->isAdmin();
+        return $user->isVendor();
     }
 
     public function view(User $user, Coupon $record): bool
     {
-        return $user->isAdmin();
+        return $user->isVendor();
     }
 
     public function create(User $user): bool
     {
-        return $user->isAdmin();
+        return $user->isVendor();
     }
 
     public function update(User $user, Coupon $record): bool
     {
-        return $user->isAdmin();
+        return $user->isVendor();
     }
 
     public function delete(User $user, Coupon $record): bool
     {
-        return $user->isAdmin();
+        return $user->isVendor();
     }
 }

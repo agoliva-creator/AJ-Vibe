@@ -9,17 +9,17 @@ class ProductPolicy
 {
     public function viewAny(User $user): bool
     {
-        return $user->isAdmin() || $user->isVendor();
+        return $user->isVendor();
     }
 
     public function view(User $user, Product $product): bool
     {
-        return $user->isAdmin() || ($user->isVendor() && $product->vendor_id === $user->id);
+        return $user->isVendor() && $product->vendor_id === $user->id;
     }
 
     public function create(User $user): bool
     {
-        return $user->isAdmin() || $user->isVendor();
+        return $user->isVendor();
     }
 
     public function update(User $user, Product $product): bool

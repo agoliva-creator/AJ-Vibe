@@ -44,7 +44,7 @@ test('role boundaries apply to pages and mutations', function () {
     $this->get('/manage/users')->assertForbidden();
     $vendor = User::factory()->create(['role' => 'vendor']);
     $this->actingAs($vendor)->get('/manage/products')->assertOk();
-    $this->get('/manage/categories')->assertForbidden();
+    $this->get('/manage/categories')->assertOk();
     $this->get('/settings')->assertForbidden();
     $this->actingAs(User::factory()->create(['role' => 'admin']))->get('/manage/users')->assertOk();
 });
@@ -76,16 +76,17 @@ test('profile settings reject duplicate emails and unconfirmed passwords', funct
     expect(Hash::check('Password12345', $user->fresh()->password))->toBeTrue();
 });
 test('catalog management modules support complete crud', function () {
-    $this->actingAs(User::factory()->create(['role' => 'admin']));
+    $admin = User::factory()->create(['role' => 'admin']);
     $vendor = User::factory()->create(['role' => 'vendor']);
     $category = Category::factory()->create();
     $data = [
         'categories' => ['name' => 'New category'],
-        'products' => ['name' => 'New product', 'category_id' => $category->id, 'vendor_id' => $vendor->id, 'price' => '250.00', 'stock' => 10, 'status' => 'active'],
+        'products' => ['name' => 'New product', 'category_id' => $category->id, 'price' => '250.00', 'stock' => 10, 'status' => 'active'],
         'users' => ['name' => 'New account', 'email' => 'newaccount@test.com', 'password' => 'Password12345', 'role' => 'customer', 'active' => 1],
         'coupons' => ['code' => 'TEST10', 'type' => 'percent', 'value' => 10, 'minimum_cents' => 0, 'active' => 1],
     ];
     foreach ($data as $entity => $payload) {
+        $this->actingAs($entity === 'users' ? $admin : $vendor);
         $this->post('/manage/'.$entity, $payload)->assertSessionHasNoErrors()->assertRedirect();
         $class = ManagementController::MODULES[$entity];
         $record = $class::latest('id')->first();
@@ -141,7 +142,7 @@ test('orders provide invoices pdfs and queued receipts', function () {
     Mail::assertQueued(OrderConfirmation::class, fn ($mail) => $mail->hasTo($order->buyer_email));
 });
 test('referenced categories cannot be deleted', function () {
-    $this->actingAs(User::factory()->create(['role' => 'admin']));
+    $this->actingAs(User::factory()->create(['role' => 'vendor']));
     $product = Product::factory()->create();
     $this->delete('/manage/categories/'.$product->category_id)->assertSessionHasErrors('record');
     $this->assertDatabaseHas('categories', ['id' => $product->category_id]);
@@ -177,17 +178,18 @@ test('admin can delete a seller while retaining products and order items', funct
     $this->assertDatabaseMissing('users', ['id' => $sellerId]);
     $this->assertDatabaseHas('products', ['id' => $product->id, 'vendor_id' => null, 'status' => 'draft']);
     $this->assertDatabaseHas('order_items', ['id' => $item->id, 'vendor_id' => null]);
-    $this->get('/orders/'.$item->order_id)->assertOk();
+    $this->get('/orders/'.$item->order_id)->assertForbidden();
 });
 test('workspace pages render for admin and vendor', function () {
     $admin = User::factory()->create(['role' => 'admin']);
     $product = Product::factory()->create();
     Coupon::factory()->create();
     $this->actingAs($admin);
-    foreach (['/dashboard', '/account', '/api-guide', '/settings', '/orders'] as $url) {
+    foreach (['/dashboard', '/account', '/api-guide', '/settings'] as $url) {
         $this->get($url)->assertOk();
     }
     foreach (['users', 'products', 'categories', 'coupons'] as $entity) {
+        $this->actingAs($entity === 'users' ? $admin : $product->vendor);
         $class = ManagementController::MODULES[$entity];
         $id = $class::first()->id;
         $this->get('/manage/'.$entity)->assertOk();
@@ -296,12 +298,13 @@ test('seller dashboard scopes inventory sales and recent order items to its owne
     $admin = User::factory()->create(['role' => 'admin']);
     $this->actingAs($admin)->get('/dashboard')
         ->assertOk()
-        ->assertSee('One Clear View.')
-        ->assertSee($product->name)
-        ->assertSee($otherProduct->name)
-        ->assertSee($otherOrder->buyer_name)
+        ->assertSee('Your administration workspace.')
+        ->assertSee('Manage users')
+        ->assertDontSee($product->name)
+        ->assertDontSee($otherProduct->name)
+        ->assertDontSee($otherOrder->buyer_name)
         ->assertViewHas('products', 2)
-        ->assertViewHas('orders', 2)
+        ->assertViewHas('orders', 0)
         ->assertViewHas('sales', 92000)
         ->assertViewHas('extraCount', User::count());
 });

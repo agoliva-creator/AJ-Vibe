@@ -16,11 +16,11 @@ Route::prefix('v1')->middleware('throttle:60,1')->group(function (): void {
         Route::get('/cart', [CartController::class, 'show'])->middleware('role:customer');
         Route::put('/cart', [CartController::class, 'sync'])->middleware('role:customer');
         Route::post('/cart/items', [CartController::class, 'set'])->middleware('role:customer');
-        Route::get('/orders', [OrderController::class, 'index']);
+        Route::get('/orders', [OrderController::class, 'index'])->middleware('role:customer,vendor');
         Route::post('/orders', [OrderController::class, 'store'])->middleware(['role:customer', 'throttle:10,1']);
-        Route::patch('/orders/{order}/tracking', [OrderController::class, 'tracking'])->middleware('role:admin,vendor');
+        Route::patch('/orders/{order}/tracking', [OrderController::class, 'tracking'])->middleware('role:vendor');
         Route::get('/orders/{order}', [OrderController::class, 'show']);
-        Route::patch('/orders/{order}', [OrderController::class, 'update'])->middleware('role:admin,vendor');
+        Route::patch('/orders/{order}', [OrderController::class, 'update'])->middleware('role:vendor');
         Route::post('/orders/{order}/cancel', [OrderController::class, 'cancel']);
     });
 });
