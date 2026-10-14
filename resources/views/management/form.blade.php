@@ -2,6 +2,8 @@
 @section('content')
 @if($entity === 'coupons')
 @include('management.coupon-form')
+@elseif($entity === 'users')
+@include('management.user-form')
 @else
 <a class="management-back-button btn btn-sm btn-outline-secondary d-inline-flex align-items-center gap-2" href="{{ route('records.index',$entity) }}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12H4m6-6-6 6 6 6"/></svg><span>Back to {{ $entity }}</span></a><h1 class="mt-3">{{ $record->exists ? 'Edit' : 'Add' }} {{ \Illuminate\Support\Str::singular($entity) }}</h1><form class="card p-4 mt-4 {{ $entity === 'products' ? 'inventory-editor' : '' }}" method="post" enctype="multipart/form-data" action="{{ $record->exists ? route('records.update',[$entity,$record->id]) : route('records.store',$entity) }}">@csrf
 @if($record->exists)

@@ -9,7 +9,7 @@ New season. New favorites. <a href="{{ route('catalog.index') }}">Discover the c
 </div></div>
 <nav class="fashion-navigation navbar-expand-lg no-print">
 <div class="fashion-container fashion-nav-inner">
-<a class="fashion-brand" href="{{ route('dashboard') }}"><span class="fashion-brand-mark">A</span>AJ <span class="fashion-brand-light">Vibe</span></a>
+<a class="fashion-brand" href="{{ route('dashboard') }}"><span class="fashion-brand-mark">AJ</span>AJ <span class="fashion-brand-light">Vibe</span></a>
 <button class="navbar-toggler fashion-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#role-navigation" aria-controls="role-navigation" aria-expanded="false" aria-label="Toggle navigation">☰</button>
 <div class="collapse navbar-collapse fashion-nav-collapse" id="role-navigation">
 <div class="fashion-nav-links">
