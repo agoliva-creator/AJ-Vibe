@@ -3,11 +3,12 @@
 @if($entity === 'coupons')
 @include('management.coupon-form')
 @else
-<a class="management-back-button btn btn-sm btn-outline-secondary d-inline-flex align-items-center gap-2" href="{{ route('records.index',$entity) }}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12H4m6-6-6 6 6 6"/></svg><span>Back to {{ $entity }}</span></a><h1 class="mt-3">{{ $record->exists ? 'Edit' : 'Add' }} {{ \Illuminate\Support\Str::singular($entity) }}</h1><form class="card p-4 mt-4" style="max-width:760px" method="post" enctype="multipart/form-data" action="{{ $record->exists ? route('records.update',[$entity,$record->id]) : route('records.store',$entity) }}">@csrf
+<a class="management-back-button btn btn-sm btn-outline-secondary d-inline-flex align-items-center gap-2" href="{{ route('records.index',$entity) }}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12H4m6-6-6 6 6 6"/></svg><span>Back to {{ $entity }}</span></a><h1 class="mt-3">{{ $record->exists ? 'Edit' : 'Add' }} {{ \Illuminate\Support\Str::singular($entity) }}</h1><form class="card p-4 mt-4 {{ $entity === 'products' ? 'inventory-editor' : '' }}" method="post" enctype="multipart/form-data" action="{{ $record->exists ? route('records.update',[$entity,$record->id]) : route('records.store',$entity) }}">@csrf
 @if($record->exists)
 @method('PUT')
 @endif
-@foreach($fields as $field)
+<div class="inventory-fields">@foreach($fields as $field)
+<div class="inventory-field {{ $field === 'description' || $field === 'name' ? 'inventory-field-wide' : '' }}">
 <label class="form-label mt-3" for="{{ $field }}">{{ ucfirst(str_replace('_',' ',str_replace('_id','',$field))) }}</label>
 @if(isset($options[$field]))
 <select class="form-select" name="{{ $field }}" id="{{ $field }}" required><option value="">Select</option>
@@ -20,7 +21,7 @@
 @else
 <input class="form-control" id="{{ $field }}" name="{{ $field }}" type="{{ match($field) {'email'=>'email','password'=>'password','starts_at','expires_at'=>'datetime-local','price','stock','value','minimum_cents','usage_limit'=>'number',default=>'text'} }}" value="{{ $field === 'password' ? '' : old($field,in_array($field,['starts_at','expires_at']) ? $record->$field?->format('Y-m-d\TH:i') : $record->$field) }}" @if($field === 'price') step="0.01" min="0" @endif @if(in_array($field,['stock','value','minimum_cents','usage_limit'])) step="1" min="0" @endif @required(!in_array($field,['password','description','slug','usage_limit','starts_at','expires_at'])) @if($field === 'password') autocomplete="new-password" @endif>
 @endif
-@endforeach
+</div>@endforeach</div>
 @if(in_array($entity,['products','users']))
 @if($entity === 'products')
 <label class="form-label mt-4" for="variant_rows">Sizes, colors & stock</label><textarea class="form-control" name="variant_rows" id="variant_rows" rows="5" placeholder="M | Black | 10&#10;L | Black | 8&#10;M | White | 12">{{ old('variant_rows', $record->exists ? $record->variants->where('active',true)->map(fn($variant)=>$variant->size.' | '.$variant->color.' | '.$variant->stock)->join("\n") : '') }}</textarea><p class="small text-muted mt-2">One combination per line: Size | Color | Stock. Leave blank for products without variants. For variant products, total stock is calculated automatically. Removed combinations become unavailable.</p>
